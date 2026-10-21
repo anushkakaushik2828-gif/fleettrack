@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: fleettrack
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.18.0
+      - key: JWT_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: FORCE_HTTPS
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: SIMULATION
+        value: "true"
+      - key: SIMULATOR_INTERVAL_MS
+        value: "5000"
+      - key: DB_PATH
+        value: ./data/fleettrack.db

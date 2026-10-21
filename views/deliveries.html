@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f1f5f9">
+  <title>Recent Deliveries &amp; Shipments — FleetTrack</title>
+  <meta name="description" content="Live dispatch tracking, shipment history, route progress and fleet fulfillment operations.">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/vendor/lucide.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+  <fleet-header active="deliveries"></fleet-header>
+
+  <main class="flex-1 page-wrap py-6 space-y-5">
+    <!-- Page title & actions -->
+    <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h1 class="text-2xl sm:text-[28px] leading-tight font-extrabold tracking-tight text-slate-950">Recent Deliveries &amp; Shipments</h1>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+            <span class="live-dot !w-1.5 !h-1.5"></span> Live Dispatch
+          </span>
+        </div>
+        <p class="text-sm text-slate-500 mt-1.5">Live tracking, dispatch history and real-time fulfillment metrics across North America.</p>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button id="exportCsv" type="button" class="btn-secondary !py-2.5">
+          <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+        </button>
+        <button id="openCreate" type="button" class="btn-primary !py-2.5">
+          <i data-lucide="plus" class="w-4 h-4"></i> Create Shipment
+        </button>
+      </div>
+    </section>
+
+    <!-- KPI strip -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" aria-label="Shipment summary metrics">
+      <div class="card p-4">
+        <div class="flex items-center justify-between gap-3">
+          <span class="metric-label">Total Shipments</span>
+          <span class="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 text-slate-500 flex items-center justify-center"><i data-lucide="package" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-baseline justify-between gap-3">
+          <span id="kpiTotal" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</span>
+          <span class="inline-flex items-center gap-1 text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">
+            <i data-lucide="activity" class="w-3 h-3"></i> Live network
+          </span>
+        </div>
+        <p id="kpiTotalSub" class="text-[11px] text-slate-500 mt-2">Dispatch manifests inside the workspace</p>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between gap-3">
+          <span class="metric-label">In Transit</span>
+          <span class="w-8 h-8 rounded-lg bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center"><i data-lucide="navigation" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-baseline justify-between gap-3">
+          <span id="kpiTransit" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</span>
+          <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Tracking GPS
+          </span>
+        </div>
+        <p id="kpiTransitSub" class="text-[11px] text-slate-500 mt-2">Vehicles currently moving</p>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between gap-3">
+          <span class="metric-label">Delivered</span>
+          <span class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle-2" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-baseline justify-between gap-3">
+          <span id="kpiDelivered" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</span>
+          <span id="kpiOnTime" class="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded">—</span>
+        </div>
+        <p id="kpiDeliveredSub" class="text-[11px] text-slate-500 mt-2">Electronic proof of delivery captured</p>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between gap-3">
+          <span class="metric-label">Delayed &amp; Exceptions</span>
+          <span class="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-baseline justify-between gap-3">
+          <span id="kpiDelayed" class="text-[28px] leading-8 font-extrabold tracking-tight text-rose-700">—</span>
+          <span id="kpiDelayedBadge" class="inline-flex items-center gap-1 text-[10px] font-semibold text-rose-700 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded">Monitor</span>
+        </div>
+        <p id="kpiDelayedSub" class="text-[11px] text-slate-500 mt-2">Weather, mechanical and route exceptions</p>
+      </div>
+    </section>
+
+    <!-- Filter & search -->
+    <section class="card p-3.5">
+      <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+        <div class="relative flex-1 xl:max-w-md">
+          <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none"></i>
+          <input id="shipmentSearch" type="search" class="field-input h-10 pl-9 pr-12 !text-xs" placeholder="Search order, truck, driver or destination…" autocomplete="off" aria-label="Search shipments">
+          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-mono font-semibold bg-slate-100 border border-slate-200 rounded text-slate-400">⌘K</span>
+        </div>
+        <div class="flex items-center gap-1.5 overflow-x-auto nav-scroll pb-0.5" role="tablist" aria-label="Filter shipments by status">
+          <button type="button" data-status="all" class="filter-pill filter-pill-all" role="tab" aria-selected="true">All Statuses <span data-count="all" class="opacity-80">—</span></button>
+          <button type="button" data-status="in_transit" class="filter-pill filter-pill-amber" role="tab" aria-selected="false"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> In Transit <span data-count="in_transit" class="font-bold">—</span></button>
+          <button type="button" data-status="delivered" class="filter-pill filter-pill-emerald" role="tab" aria-selected="false"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Delivered <span data-count="delivered" class="font-bold">—</span></button>
+          <button type="button" data-status="delayed" class="filter-pill filter-pill-rose" role="tab" aria-selected="false"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Delayed <span data-count="delayed" class="font-bold">—</span></button>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 xl:border-l xl:border-slate-200 xl:pl-3">
+          <span class="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-400"><i data-lucide="list-filter" class="w-3.5 h-3.5"></i> Filters</span>
+          <select id="vehicleFilter" class="field-select !py-1.5 !text-[11px] !w-auto min-w-[122px]" aria-label="Filter by vehicle">
+            <option value="all">Vehicle: All</option>
+          </select>
+          <select id="regionFilter" class="field-select !py-1.5 !text-[11px] !w-auto min-w-[116px]" aria-label="Filter by region">
+            <option value="all">Region: All</option>
+            <option value="North">Region: North</option>
+            <option value="East">Region: East</option>
+            <option value="South">Region: South</option>
+            <option value="West">Region: West</option>
+          </select>
+          <button id="resetFilters" type="button" class="icon-btn !w-8 !h-8" title="Reset filters" aria-label="Reset filters">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table + live detail -->
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+      <div class="xl:col-span-8 card overflow-hidden">
+        <div id="selectionBar" class="hidden items-center justify-between gap-3 px-4 py-2.5 bg-blue-50/70 border-b border-blue-100">
+          <p class="text-[11px] font-semibold text-blue-800"><span id="selectedCount">0</span> shipments selected</p>
+          <div class="flex items-center gap-2">
+            <button id="copySelected" type="button" class="text-[10px] font-semibold text-blue-700 hover:text-blue-900">Copy order IDs</button>
+            <span class="text-blue-200">|</span>
+            <button id="clearSelected" type="button" class="text-[10px] font-semibold text-slate-500 hover:text-slate-800">Clear</button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100">
+          <div>
+            <h2 class="text-sm font-bold text-slate-900">Dispatch Manifest</h2>
+            <p id="tableSummary" class="text-[10px] text-slate-400 mt-0.5">Loading shipments…</p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-1">
+            <span class="live-dot !w-1.5 !h-1.5"></span> Synced
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="w-10" scope="col"><input id="selectAll" type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5" aria-label="Select all shipments on this page"></th>
+                <th scope="col">Order ID</th>
+                <th scope="col">Vehicle &amp; Driver</th>
+                <th scope="col">Route</th>
+                <th scope="col">Progress</th>
+                <th scope="col">Status</th>
+                <th scope="col">Departure / ETA</th>
+                <th scope="col" class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="deliveriesBody">
+              <tr><td colspan="8" class="!py-12"><div class="flex flex-col items-center gap-2"><span class="w-6 h-6 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></span><span class="text-[10px] text-slate-400">Loading dispatch manifest…</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-4 py-3 bg-slate-50/60 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-4 text-[11px] text-slate-500">
+            <span id="pageInfo">—</span>
+            <div class="flex items-center gap-1.5">
+              <span class="hidden sm:inline text-slate-400">Rows:</span>
+              <select id="pageSize" class="field-select !py-1 !pl-2 !pr-7 !text-[10px] !w-auto" aria-label="Rows per page">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+          </div>
+          <div id="pagination" class="flex items-center gap-1.5 self-end sm:self-auto" aria-label="Pagination"></div>
+        </div>
+      </div>
+
+      <aside id="detailPanel" class="xl:col-span-4 xl:sticky xl:top-20" aria-live="polite">
+        <div class="card p-5">
+          <div class="skeleton h-5 w-40"></div>
+          <div class="skeleton h-3 w-full mt-3"></div>
+          <div class="skeleton h-16 w-full mt-5"></div>
+          <div class="grid grid-cols-3 gap-2 mt-4"><div class="skeleton h-16"></div><div class="skeleton h-16"></div><div class="skeleton h-16"></div></div>
+          <div class="skeleton h-4 w-full mt-6"></div>
+          <div class="skeleton h-4 w-5/6 mt-2"></div>
+          <div class="skeleton h-4 w-full mt-2"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Create shipment modal -->
+  <div id="createModal" class="modal-overlay" role="presentation">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="createTitle">
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-200 sticky top-0 bg-white z-10">
+        <div>
+          <h2 id="createTitle" class="text-base font-bold text-slate-950">Create New Shipment</h2>
+          <p class="text-[11px] text-slate-500 mt-0.5">Assign an available vehicle and publish a live dispatch manifest.</p>
+        </div>
+        <button type="button" data-close-modal="createModal" class="icon-btn !w-8 !h-8" aria-label="Close create shipment modal"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <form id="createShipmentForm" class="p-5 space-y-4" novalidate>
+        <div id="createError" class="hidden rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-[11px] font-medium text-rose-700" role="alert"></div>
+        <div>
+          <label for="createVehicle" class="field-label">Vehicle &amp; driver</label>
+          <select id="createVehicle" name="vehicleId" class="field-select" required>
+            <option value="">Select an available vehicle…</option>
+          </select>
+          <p id="vehicleHelp" class="text-[10px] text-slate-400 mt-1.5">Vehicles with an active trip or in maintenance are unavailable.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="originCity" class="field-label">Origin city</label>
+            <select id="originCity" name="originCity" class="field-select" required></select>
+          </div>
+          <div>
+            <label for="destinationCity" class="field-label">Destination city</label>
+            <select id="destinationCity" name="destinationCity" class="field-select" required></select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="cargoType" class="field-label">Cargo type</label>
+            <select id="cargoType" name="cargo" class="field-select" required></select>
+          </div>
+          <div>
+            <label for="weightTons" class="field-label">Weight (tons)</label>
+            <input id="weightTons" name="weightTons" type="number" min="0.1" max="40" step="0.1" value="12.5" class="field-input" required>
+          </div>
+        </div>
+        <div class="rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2.5 flex items-start gap-2">
+          <i data-lucide="route" class="w-4 h-4 text-blue-500 shrink-0 mt-0.5"></i>
+          <p class="text-[10px] leading-relaxed text-blue-700">The route distance, ETA, dispatch timeline and live GPS tracking are generated automatically after publishing.</p>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button type="button" data-close-modal="createModal" class="btn-secondary">Cancel</button>
+          <button id="createSubmit" type="submit" class="btn-primary"><i data-lucide="send" class="w-3.5 h-3.5"></i> Publish shipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Document modal -->
+  <div id="docModal" class="modal-overlay" role="presentation">
+    <div class="modal-panel !max-w-2xl" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-200 no-print">
+        <h2 id="docTitle" class="text-base font-bold text-slate-950">Bill of Lading / POD</h2>
+        <button type="button" data-close-modal="docModal" class="icon-btn !w-8 !h-8" aria-label="Close document"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="docContent" class="p-5"></div>
+      <div class="px-5 py-3.5 border-t border-slate-200 flex items-center justify-end gap-2 no-print">
+        <button type="button" data-close-modal="docModal" class="btn-secondary">Close</button>
+        <button id="printDoc" type="button" class="btn-primary"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telemetry modal -->
+  <div id="telemetryModal" class="modal-overlay" role="presentation">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="telemetryTitle">
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-200">
+        <div>
+          <h2 id="telemetryTitle" class="text-base font-bold text-slate-950">Live Vehicle Telemetry</h2>
+          <p class="text-[11px] text-slate-500 mt-0.5">Current vehicle sensor snapshot</p>
+        </div>
+        <button type="button" data-close-modal="telemetryModal" class="icon-btn !w-8 !h-8" aria-label="Close telemetry"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="telemetryContent" class="p-5"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/deliveries.js"></script>
+</body>
+</html>

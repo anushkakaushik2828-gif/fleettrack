@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f1f5f9">
+  <title>Alerts — FleetTrack</title>
+  <meta name="description" content="Real-time fleet alerts, incident triage and driver safety notifications from the FleetTrack operations center.">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/vendor/lucide.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+  <fleet-header active="alerts"></fleet-header>
+
+  <main class="flex-1 page-wrap py-6 space-y-5">
+    <!-- Header -->
+    <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h1 class="text-2xl sm:text-[28px] leading-tight font-extrabold tracking-tight text-slate-950">Alert Center</h1>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200">
+            <span class="live-dot !w-1.5 !h-1.5 !bg-rose-500"></span> Real-time Monitoring
+          </span>
+        </div>
+        <p class="text-sm text-slate-500 mt-1.5">Triage telematics, safety and dispatch exceptions from one operations queue.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5">
+        <button id="acknowledgeAll" type="button" class="btn-secondary !py-2.5" disabled>
+          <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Acknowledge all
+        </button>
+        <button id="refreshAlerts" type="button" class="btn-primary !py-2.5">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+        </button>
+      </div>
+    </section>
+
+    <!-- KPI cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4" aria-label="Alert key metrics">
+      <div class="card p-4">
+        <div class="flex items-center justify-between">
+          <span class="metric-label">Open Incidents</span>
+          <span class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="bell-ring" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-end justify-between gap-2">
+          <div>
+            <p id="alertOpen" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
+            <p class="text-[10px] text-slate-400 mt-1"><span id="alertAcknowledged" class="font-semibold text-blue-600">—</span> acknowledged in review</p>
+          </div>
+          <span class="text-[9px] font-bold uppercase tracking-wide text-rose-600 bg-rose-50 border border-rose-100 rounded-full px-1.5 py-0.5">Action</span>
+        </div>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between">
+          <span class="metric-label">Critical</span>
+          <span class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="siren" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3">
+          <p id="alertCritical" class="text-[28px] leading-8 font-extrabold tracking-tight text-rose-600">—</p>
+          <p class="text-[10px] text-slate-400 mt-1">Immediate operator response required</p>
+        </div>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between">
+          <span class="metric-label">Warnings</span>
+          <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="triangle-alert" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3">
+          <p id="alertWarning" class="text-[28px] leading-8 font-extrabold tracking-tight text-amber-600">—</p>
+          <p class="text-[10px] text-slate-400 mt-1">Operational watchlist — monitor closely</p>
+        </div>
+      </div>
+      <div class="card p-4">
+        <div class="flex items-center justify-between">
+          <span class="metric-label">Resolved</span>
+          <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="shield-check" class="w-4 h-4"></i></span>
+        </div>
+        <div class="mt-3 flex items-end justify-between gap-2">
+          <div>
+            <p id="alertResolved" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
+            <p class="text-[10px] text-slate-400 mt-1"><span id="alertInfo" class="font-semibold text-slate-600">—</span> informational events tracked</p>
+          </div>
+          <span class="text-[9px] font-bold uppercase tracking-wide text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-1.5 py-0.5">Closed</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alert feed + playbook -->
+    <section class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+      <div class="xl:col-span-8 card overflow-hidden">
+        <div class="p-4 sm:p-5 border-b border-slate-100">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base font-bold text-slate-950 tracking-tight">Incident Feed</h2>
+                <span class="demo-pill !text-[9px] !px-2 !py-0.5"><span class="live-dot !w-1.5 !h-1.5"></span>Live</span>
+              </div>
+              <p id="alertFeedSummary" class="text-[11px] text-slate-500 mt-0.5">Loading operational alerts…</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input id="alertSearch" type="search" class="field-input !w-[190px] !py-1.5 !pl-8 !text-[11px]" placeholder="Search alerts, vehicles…" aria-label="Search alerts">
+              </div>
+              <select id="alertSeverity" class="field-select !py-1.5 !text-[11px] !w-auto" aria-label="Filter alert severity">
+                <option value="all">Severity: All</option>
+                <option value="critical">Critical</option>
+                <option value="warning">Warning</option>
+                <option value="info">Info</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 overflow-x-auto nav-scroll mt-3 pt-3 border-t border-slate-100" role="tablist" aria-label="Alert status">
+            <button type="button" role="tab" data-alert-status="all" class="filter-pill filter-pill-all">All <span data-alert-count="all" class="ml-0.5 opacity-80">0</span></button>
+            <button type="button" role="tab" data-alert-status="active" class="filter-pill filter-pill-neutral">Open <span data-alert-count="active" class="ml-0.5 opacity-70">0</span></button>
+            <button type="button" role="tab" data-alert-status="acknowledged" class="filter-pill filter-pill-neutral">Acknowledged <span data-alert-count="acknowledged" class="ml-0.5 opacity-70">0</span></button>
+            <button type="button" role="tab" data-alert-status="resolved" class="filter-pill filter-pill-neutral">Resolved <span data-alert-count="resolved" class="ml-0.5 opacity-70">0</span></button>
+          </div>
+        </div>
+
+        <div id="alertsList" class="divide-y divide-slate-100" aria-live="polite">
+          <div class="p-4 sm:p-5 space-y-3">
+            <div class="skeleton h-14 w-full"></div>
+            <div class="skeleton h-14 w-full"></div>
+            <div class="skeleton h-14 w-full"></div>
+            <div class="skeleton h-14 w-4/5"></div>
+          </div>
+        </div>
+
+        <div class="px-4 sm:px-5 py-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+          <p id="alertFooter" class="text-[10px] text-slate-400">Sorted by severity and recency.</p>
+          <span id="alertSocketState" class="inline-flex items-center gap-1.5 text-[10px] text-slate-500"><span class="live-dot !w-1.5 !h-1.5"></span> Socket connected</span>
+        </div>
+      </div>
+
+      <div class="xl:col-span-4 space-y-5">
+        <div class="card p-5">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-slate-950 tracking-tight">Alert Mix</h2>
+              <p class="text-[11px] text-slate-500 mt-0.5">Open incidents by severity.</p>
+            </div>
+            <i data-lucide="pie-chart" class="w-4 h-4 text-slate-300"></i>
+          </div>
+          <div id="alertDonut" class="mt-3"></div>
+          <div id="alertSeverityLegend" class="mt-2 space-y-1.5"></div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-slate-950 tracking-tight">Response Playbook</h2>
+              <p class="text-[11px] text-slate-500 mt-0.5">Standard operating procedure</p>
+            </div>
+            <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><i data-lucide="book-open-check" class="w-4 h-4"></i></span>
+          </div>
+          <ol class="mt-4 space-y-3">
+            <li class="flex gap-3">
+              <span class="w-5 h-5 rounded-full bg-rose-50 text-rose-600 text-[9px] font-bold flex items-center justify-center shrink-0">1</span>
+              <div>
+                <p class="text-[11px] font-semibold text-slate-800">Acknowledge critical alerts</p>
+                <p class="text-[10px] text-slate-400 mt-0.5 leading-relaxed">Assign an operator within 5 minutes and confirm the vehicle location.</p>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-5 h-5 rounded-full bg-amber-50 text-amber-600 text-[9px] font-bold flex items-center justify-center shrink-0">2</span>
+              <div>
+                <p class="text-[11px] font-semibold text-slate-800">Investigate &amp; contact driver</p>
+                <p class="text-[10px] text-slate-400 mt-0.5 leading-relaxed">Review telemetry, contact the driver and log the operational decision.</p>
+              </div>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 text-[9px] font-bold flex items-center justify-center shrink-0">3</span>
+              <div>
+                <p class="text-[11px] font-semibold text-slate-800">Resolve when stable</p>
+                <p class="text-[10px] text-slate-400 mt-0.5 leading-relaxed">Close the incident once the exception is cleared and no further risk remains.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h2 class="text-base font-bold text-slate-950 tracking-tight">Automation Rules</h2>
+              <p class="text-[11px] text-slate-500 mt-0.5">Telemetry thresholds in effect</p>
+            </div>
+            <span class="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-1"><span class="live-dot !w-1.5 !h-1.5"></span>Active</span>
+          </div>
+          <div class="mt-3 divide-y divide-slate-100">
+            <div class="py-2.5 flex items-center justify-between gap-2 text-[10px]"><span class="text-slate-500">Overspeed threshold</span><span class="font-mono font-semibold text-slate-900">68 mph</span></div>
+            <div class="py-2.5 flex items-center justify-between gap-2 text-[10px]"><span class="text-slate-500">Reefer tolerance</span><span class="font-mono font-semibold text-slate-900">± 3.0°F</span></div>
+            <div class="py-2.5 flex items-center justify-between gap-2 text-[10px]"><span class="text-slate-500">Idle duration</span><span class="font-mono font-semibold text-slate-900">20 min</span></div>
+            <div class="py-2.5 flex items-center justify-between gap-2 text-[10px]"><span class="text-slate-500">Geofence corridor</span><span class="font-mono font-semibold text-slate-900">Approved route</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="text-center text-[10px] text-slate-400 pb-2">Alerts are generated from live telematics and dispatch rules, then streamed to this queue in real time.</p>
+  </main>
+
+  <!-- Alert detail modal -->
+  <div id="alertModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="alertModalTitle">
+    <div class="modal-panel sm:max-w-lg">
+      <div class="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-slate-100 px-5 py-3.5 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center"><i data-lucide="bell-ring" class="w-3.5 h-3.5"></i></span>
+          <div>
+            <h2 id="alertModalTitle" class="text-sm font-bold text-slate-950">Alert Detail</h2>
+            <p class="text-[10px] text-slate-400">Incident context and resolution actions</p>
+          </div>
+        </div>
+        <button type="button" data-close-alert class="icon-btn !w-8 !h-8" aria-label="Close alert detail"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="alertModalBody" class="p-5"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/alerts.js"></script>
+</body>
+</html>

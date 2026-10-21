@@ -1,0 +1,47 @@
+{
+  "name": "fleettrack",
+  "version": "1.0.0",
+  "description": "FleetTrack — real-time fleet management dashboard with Node.js, Express, Socket.IO and SQLite",
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "dev:https": "node scripts/dev-https.mjs",
+    "build": "npm run build:css && npm run build:vendor",
+    "build:css": "tailwindcss -i ./src/styles.css -o ./public/assets/app.css --minify",
+    "build:vendor": "node scripts/copy-vendor.mjs",
+    "seed": "node server/seed-cli.js --reset",
+    "test": "node --test tests/geo.test.js tests/http.test.js tests/auth.test.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "keywords": [
+    "fleet-management",
+    "express",
+    "socket.io",
+    "sqlite",
+    "realtime"
+  ],
+  "author": "FleetTrack",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.8",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "leaflet": "^1.9.4",
+    "lucide": "^1.60.0",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31",
+    "selfsigned": "^5.5.0",
+    "tailwindcss": "^3.4.17"
+  }
+}
