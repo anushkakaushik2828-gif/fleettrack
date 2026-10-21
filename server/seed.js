@@ -19,16 +19,16 @@ import {
 } from './lib/geo.js';
 
 const NAMED_DRIVERS = [
-  { code: 'TRK-092', name: 'Marcus Vance', score: 98.4, mpg: 9.4, deliveries: 842, miles: 218540, onTime: 99.4, color: '#2563eb' },
-  { code: 'TRK-145', name: 'Elena Rostova', score: 97.1, mpg: 9.1, deliveries: 776, miles: 196320, onTime: 99.1, color: '#7c3aed' },
-  { code: 'TRK-056', name: 'David Kim', score: 96.2, mpg: 8.9, deliveries: 731, miles: 182440, onTime: 98.8, color: '#0891b2' },
-  { code: 'TRK-112', name: 'Sarah Jenkins', score: 95.6, mpg: 8.8, deliveries: 690, miles: 171810, onTime: 98.2, color: '#db2777' },
-  { code: 'TRK-084', name: 'Carlos Mendez', score: 94.9, mpg: 8.7, deliveries: 668, miles: 165220, onTime: 98.0, color: '#ea580c' },
-  { code: 'TRK-108', name: 'Amara Okafor', score: 94.3, mpg: 8.6, deliveries: 604, miles: 149580, onTime: 97.8, color: '#059669' },
-  { code: 'TRK-031', name: 'Priya Nair', score: 93.8, mpg: 8.5, deliveries: 588, miles: 143100, onTime: 97.6, color: '#4f46e5' },
-  { code: 'TRK-076', name: "Liam O'Connor", score: 93.1, mpg: 8.4, deliveries: 533, miles: 135940, onTime: 97.1, color: '#0284c7' },
-  { code: 'TRK-120', name: 'Noah Williams', score: 92.4, mpg: 8.3, deliveries: 501, miles: 127880, onTime: 96.9, color: '#65a30d' },
-  { code: 'TRK-017', name: 'Sofia Martinez', score: 91.8, mpg: 8.2, deliveries: 490, miles: 122650, onTime: 96.5, color: '#d946ef' },
+  { code: 'TRK-092', name: 'Marcus Vance', score: 98.4, kmpl: 4.0, deliveries: 842, km: 351663, onTime: 99.4, color: '#2563eb' },
+  { code: 'TRK-145', name: 'Elena Rostova', score: 97.1, kmpl: 3.9, deliveries: 776, km: 315946, onTime: 99.1, color: '#7c3aed' },
+  { code: 'TRK-056', name: 'David Kim', score: 96.2, kmpl: 3.8, deliveries: 731, km: 293617, onTime: 98.8, color: '#0891b2' },
+  { code: 'TRK-112', name: 'Sarah Jenkins', score: 95.6, kmpl: 3.7, deliveries: 690, km: 276497, onTime: 98.2, color: '#db2777' },
+  { code: 'TRK-084', name: 'Carlos Mendez', score: 94.9, kmpl: 3.7, deliveries: 668, km: 265898, onTime: 98.0, color: '#ea580c' },
+  { code: 'TRK-108', name: 'Amara Okafor', score: 94.3, kmpl: 3.7, deliveries: 604, km: 240705, onTime: 97.8, color: '#059669' },
+  { code: 'TRK-031', name: 'Priya Nair', score: 93.8, kmpl: 3.6, deliveries: 588, km: 230327, onTime: 97.6, color: '#4f46e5' },
+  { code: 'TRK-076', name: "Liam O'Connor", score: 93.1, kmpl: 3.6, deliveries: 533, km: 218794, onTime: 97.1, color: '#0284c7' },
+  { code: 'TRK-120', name: 'Noah Williams', score: 92.4, kmpl: 3.5, deliveries: 501, km: 205841, onTime: 96.9, color: '#65a30d' },
+  { code: 'TRK-017', name: 'Sofia Martinez', score: 91.8, kmpl: 3.5, deliveries: 490, km: 197426, onTime: 96.5, color: '#d946ef' },
 ];
 
 const FIRST_NAMES = [
@@ -188,7 +188,7 @@ const ALERT_SEEDS = [
   { type: 'harsh_braking', severity: 'warning', title: 'Harsh Braking Event: TRK-056', message: 'Three harsh braking events recorded within 12 minutes on I-35.', vehicle: 'TRK-056', minutesAgo: 33, status: 'active' },
   { type: 'geofence', severity: 'critical', title: 'Geofence Exit: TRK-112', message: 'Vehicle left the approved I-5 corridor near Tacoma, WA.', vehicle: 'TRK-112', minutesAgo: 46, status: 'active' },
   { type: 'idle_time', severity: 'warning', title: 'Extended Idle: TRK-084', message: 'Engine idling for 38 minutes at Phoenix East depot.', vehicle: 'TRK-084', minutesAgo: 58, status: 'active' },
-  { type: 'temperature', severity: 'warning', title: 'Temperature Variance: TRK-145', message: 'Reefer unit fluctuated 3.2°F above the configured setpoint.', vehicle: 'TRK-145', minutesAgo: 74, status: 'acknowledged' },
+  { type: 'temperature', severity: 'warning', title: 'Temperature Variance: TRK-145', message: 'Reefer unit fluctuated 1.8°C above the configured setpoint.', vehicle: 'TRK-145', minutesAgo: 74, status: 'acknowledged' },
   { type: 'tire_pressure', severity: 'warning', title: 'Tire Pressure Low: TRK-031', message: 'Rear axle pressure is 8 PSI below recommended range.', vehicle: 'TRK-031', minutesAgo: 91, status: 'active' },
   { type: 'route_assigned', severity: 'info', title: 'New Route Assigned: TRK-108', message: 'Boston AirCargo to JFK Terminal dispatch manifest approved.', vehicle: 'TRK-108', minutesAgo: 110, status: 'acknowledged' },
   { type: 'delivery', severity: 'info', title: 'Delivery Verified: TRK-092', message: 'POD signed by Robert Gallagher at Detroit Hub.', vehicle: 'TRK-092', minutesAgo: 132, status: 'resolved' },
@@ -298,21 +298,21 @@ export function seedDatabase({ force = false } = {}) {
       const isIdle = idleCodes.has(code);
       const status = isMaintenance || isIdle ? 'off_duty' : 'on_duty';
       const score = named?.score ?? Number(between(80.4, 91.4).toFixed(1));
-      const mpg = named?.mpg ?? Number(between(6.7, 8.1).toFixed(1));
+      const kmpl = named?.kmpl ?? Number(between(2.9, 3.5).toFixed(1));
       const driverResult = run(
         `INSERT INTO drivers
-          (name, initials, phone, email, license_no, status, safety_score, efficiency, total_miles,
+          (name, initials, phone, email, license_no, status, safety_score, efficiency, total_km,
            deliveries_completed, on_time_rate, rating, joined_at, avatar_color)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         name,
         initialsFor(name),
-        `+1 (312) 555-${String(1000 + index).slice(-4)}`,
+        `+91 9${integer(100000000, 999999999)}`,
         `${name.toLowerCase().replace(/[^a-z]+/g, '.')}@fleettrack.app`,
         `CDL-${String(480000 + index * 137).slice(0, 8)}`,
         status,
         score,
-        mpg,
-        named?.miles ?? integer(38200, 148000),
+        kmpl,
+        named?.km ?? integer(61400, 238000),
         named?.deliveries ?? integer(180, 600),
         named?.onTime ?? Number(between(93.2, 97.8).toFixed(1)),
         Number(between(4.35, 4.95).toFixed(2)),
@@ -327,11 +327,11 @@ export function seedDatabase({ force = false } = {}) {
       const vehicleResult = run(
         `INSERT INTO vehicles
           (code, type, plate, make, model, year, driver_id, status, fuel_level, odometer, battery,
-           engine_temp, last_service_at, next_service_miles, lat, lng, speed_mph, region, updated_at)
+           engine_temp, last_service_at, next_service_km, lat, lng, speed_kmh, region, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         code,
         named ? 'Class 8 Heavy Rig' : vehicleModel.type,
-        `${pick(PLATE_STATES)}-${integer(1000, 9899)}`,
+        `${pick(['DL', 'MH', 'KA', 'TN', 'WB', 'TS', 'GJ', 'RJ', 'UP', 'KL'])}-${integer(1000, 9899)}`,
         named ? (index % 2 === 0 ? 'Freightliner' : 'Volvo') : vehicleModel.make,
         named ? (index % 2 === 0 ? 'Cascadia' : 'VNL 860') : vehicleModel.model,
         integer(2021, 2026),
@@ -340,12 +340,12 @@ export function seedDatabase({ force = false } = {}) {
         Number(between(isMaintenance ? 18 : 42, isMaintenance ? 44 : 96).toFixed(1)),
         odometer,
         Number(between(84, 100).toFixed(1)),
-        Number(between(184, 208).toFixed(1)),
+        Number(between(84, 98).toFixed(1)),
         daysAgo(integer(12, 180)),
         odometer + integer(800, 8500),
         homeCity.lat + between(-0.45, 0.45),
         homeCity.lng + between(-0.45, 0.45),
-        vehicleStatus === 'active' ? Number(between(0, 12).toFixed(1)) : 0,
+        vehicleStatus === 'active' ? Number(between(0, 19).toFixed(1)) : 0,
         homeCity.region,
         iso(new Date()),
       );
@@ -382,7 +382,7 @@ export function seedDatabase({ force = false } = {}) {
         `INSERT INTO shipments
           (order_code, vehicle_id, driver_id, origin, origin_lat, origin_lng, destination,
            destination_lat, destination_lng, route, region, distance_total, distance_done, cargo,
-           weight_tons, temp_f, status, progress, departed_at, eta_at, delivered_at, delay_reason,
+           weight_tons, temp_c, status, progress, departed_at, eta_at, delivered_at, delay_reason,
            pod_signature, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         shipment.order,
@@ -464,16 +464,16 @@ export function seedDatabase({ force = false } = {}) {
       if (shipment.status === 'in_transit' || shipment.status === 'delayed') {
         const point = interpolate(originCity, destinationCity, progress);
         run(
-          'UPDATE vehicles SET lat = ?, lng = ?, speed_mph = ?, updated_at = ? WHERE id = ?',
+          'UPDATE vehicles SET lat = ?, lng = ?, speed_kmh = ?, updated_at = ? WHERE id = ?',
           point.lat,
           point.lng,
-          shipment.status === 'delayed' ? Number(between(0, 12).toFixed(1)) : Number(between(48, 66).toFixed(1)),
+          shipment.status === 'delayed' ? Number(between(0, 19).toFixed(1)) : Number(between(77, 106).toFixed(1)),
           iso(new Date()),
           vehicle.id,
         );
       } else if (shipment.status === 'delivered') {
         run(
-          'UPDATE vehicles SET lat = ?, lng = ?, speed_mph = ?, updated_at = ? WHERE id = ?',
+          'UPDATE vehicles SET lat = ?, lng = ?, speed_kmh = ?, updated_at = ? WHERE id = ?',
           destinationCity.lat + between(-0.12, 0.12),
           destinationCity.lng + between(-0.12, 0.12),
           0,
@@ -578,7 +578,7 @@ export function seedDatabase({ force = false } = {}) {
       if (vehicle.status === 'active') continue;
       const parked = randomCity(null, random);
       run(
-        'UPDATE vehicles SET lat = ?, lng = ?, speed_mph = 0, updated_at = ? WHERE id = ?',
+        'UPDATE vehicles SET lat = ?, lng = ?, speed_kmh = 0, updated_at = ? WHERE id = ?',
         parked.lat + between(-0.25, 0.25),
         parked.lng + between(-0.25, 0.25),
         iso(new Date()),
@@ -610,16 +610,16 @@ export function seedDatabase({ force = false } = {}) {
     for (let offset = 89; offset >= 0; offset -= 1) {
       const date = new Date(Date.now() - offset * 86400 * 1000);
       const isToday = offset === 0;
-      const miles = isToday ? 28460 : Math.round(between(18600, 26400));
-      const fuel = Number((miles / between(7.9, 9.1)).toFixed(1));
+      const distanceKm = isToday ? 28460 : Math.round(between(18600, 26400));
+      const fuelLiters = Number((distanceKm / between(2.9, 3.5)).toFixed(1));
       const deliveries = isToday ? 248 : integer(285, 368);
       const delayed = isToday ? 8 : integer(4, 14);
       const onTime = isToday ? 98.1 : Number(between(95.1, 99.3).toFixed(1));
       run(
-        'INSERT INTO daily_metrics (day, miles, fuel_gallons, deliveries, on_time_rate, delayed) VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO daily_metrics (day, distance_km, fuel_liters, deliveries, on_time_rate, delayed) VALUES (?, ?, ?, ?, ?, ?)',
         todayKey(date),
-        miles,
-        fuel,
+        distanceKm,
+        fuelLiters,
         deliveries,
         onTime,
         delayed,
@@ -630,7 +630,7 @@ export function seedDatabase({ force = false } = {}) {
     for (const vehicle of [...vehiclesByCode.values()].slice(0, 38)) {
       const point = CITIES[Math.floor(random() * CITIES.length)];
       run(
-        'INSERT INTO telemetry (vehicle_id, lat, lng, speed_mph, fuel_level, recorded_at) VALUES (?, ?, ?, ?, ?, ?)',
+        'INSERT INTO telemetry (vehicle_id, lat, lng, speed_kmh, fuel_level, recorded_at) VALUES (?, ?, ?, ?, ?, ?)',
         vehicle.id,
         point.lat,
         point.lng,
@@ -660,3 +660,4 @@ export function numericPasswordResetHint() {
     password: config.demoPassword,
   };
 }
+

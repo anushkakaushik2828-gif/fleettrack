@@ -133,7 +133,7 @@ function renderTable() {
         </td>
         <td>
           <span class="font-mono text-[11px] font-semibold text-slate-800">${formatDecimal(driver.efficiency, 1)}</span>
-          <span class="text-[9px] text-slate-400">mpg</span>
+          <span class="text-[9px] text-slate-400">kmpl</span>
         </td>
         <td><span class="font-mono text-[11px] font-semibold ${Number(driver.onTimeRate) >= 97 ? 'text-emerald-600' : 'text-slate-700'}">${formatDecimal(driver.onTimeRate, 1)}%</span></td>
         <td><span class="font-mono text-[11px] text-slate-700">${formatNumber(driver.deliveriesCompleted)}</span></td>
@@ -357,14 +357,14 @@ async function loadDriverDetail(id) {
         </div>
         <div class="rounded-lg border border-slate-200 p-2.5">
           <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">Efficiency</p>
-          <p class="text-sm font-bold text-slate-900 mt-1">${formatDecimal(driver.efficiency, 1)} <span class="text-[9px] font-normal text-slate-400">mpg</span></p>
+          <p class="text-sm font-bold text-slate-900 mt-1">${formatDecimal(driver.efficiency, 1)} <span class="text-[9px] font-normal text-slate-400">kmpl</span></p>
         </div>
         <div class="rounded-lg border border-slate-200 p-2.5">
           <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">On-time</p>
           <p class="text-sm font-bold text-slate-900 mt-1">${formatDecimal(driver.onTimeRate, 1)}%</p>
         </div>
         <div class="rounded-lg border border-slate-200 p-2.5">
-          <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">Total miles</p>
+          <p class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">Total km</p>
           <p class="text-sm font-bold text-slate-900 mt-1">${formatCompact(driver.totalMiles)}</p>
         </div>
       </div>
@@ -391,7 +391,7 @@ async function loadDriverDetail(id) {
                   ${statusBadge(shipment.status)}
                 </div>
                 <p class="text-[9px] text-slate-500 mt-1 truncate">${escapeHtml(shipment.origin)} → ${escapeHtml(shipment.destination)}</p>
-                <p class="text-[9px] text-slate-400 mt-0.5">${formatDate(shipment.createdAt)} · ${formatNumber(shipment.distanceTotal)} mi</p>
+                <p class="text-[9px] text-slate-400 mt-0.5">${formatDate(shipment.createdAt)} · ${formatNumber(shipment.distanceTotal)} km</p>
               </a>
             `).join('') : '<p class="text-[10px] text-slate-400 py-3">No recent shipments assigned.</p>'}
           </div>
@@ -501,7 +501,7 @@ function setupInteractions() {
     try {
       const data = await api(`/api/drivers?${buildQuery().toString().replace(/([?&])page=\d+&?/, '$1').replace(/limit=10/, 'limit=100')}`);
       const rows = [
-        ['Name', 'Email', 'Phone', 'Status', 'Vehicle', 'Region', 'Safety score', 'Efficiency (mpg)', 'On-time rate', 'Deliveries', 'Total miles', 'Rating', 'Joined'],
+        ['Name', 'Email', 'Phone', 'Status', 'Vehicle', 'Region', 'Safety score', 'Efficiency (kmpl)', 'On-time rate', 'Deliveries', 'Total km', 'Rating', 'Joined'],
         ...data.drivers.map((driver) => [
           driver.name,
           driver.email,

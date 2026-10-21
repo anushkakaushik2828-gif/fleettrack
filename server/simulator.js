@@ -4,7 +4,7 @@ import { getFleetSummary, getLiveVehicles } from './lib/fleet.js';
 import { interpolate } from './lib/geo.js';
 
 const liveAlerts = [
-  { type: 'speed', severity: 'warning', title: (code) => `Overspeed Alert: ${code}`, message: (code) => `${code} exceeded the configured 68 mph fleet limit for more than 90 seconds.` },
+  { type: 'speed', severity: 'warning', title: (code) => `Overspeed Alert: ${code}`, message: (code) => `${code} exceeded the configured 110 km/h fleet limit for more than 90 seconds.` },
   { type: 'harsh_braking', severity: 'warning', title: (code) => `Harsh Braking: ${code}`, message: (code) => `Telematics recorded a hard braking event on ${code} near a construction zone.` },
   { type: 'idle', severity: 'info', title: (code) => `Long Idle: ${code}`, message: (code) => `${code} has been idling for more than 20 minutes at a scheduled stop.` },
   { type: 'geofence', severity: 'critical', title: (code) => `Geofence Breach: ${code}`, message: (code) => `${code} left its approved dispatch corridor. Route review is recommended.` },
@@ -70,7 +70,7 @@ export function startSimulator(io) {
             { lat: shipment.destination_lat, lng: shipment.destination_lng },
             progress,
           );
-          const speed = progress >= 100 ? 0 : isDelayed ? randomBetween(4, 22) : randomBetween(48, 67);
+          const speed = progress >= 100 ? 0 : isDelayed ? randomBetween(6, 35) : randomBetween(77, 108);
           const fuel = Math.max(8, Number(shipment.fuel_level) - randomBetween(0.001, 0.006));
 
           if (progress >= 100 && shipment.status !== 'delivered') {
@@ -93,7 +93,7 @@ export function startSimulator(io) {
               'delivery',
             );
             run(
-              'UPDATE vehicles SET lat = ?, lng = ?, speed_mph = 0, fuel_level = ?, updated_at = ? WHERE id = ?',
+              'UPDATE vehicles SET lat = ?, lng = ?, speed_kmh = 0, fuel_level = ?, updated_at = ? WHERE id = ?',
               shipment.destination_lat,
               shipment.destination_lng,
               fuel,
@@ -106,12 +106,12 @@ export function startSimulator(io) {
             );
             const day = now.slice(0, 10);
             run(
-              `INSERT INTO daily_metrics (day, miles, fuel_gallons, deliveries, on_time_rate, delayed)
+              `INSERT INTO daily_metrics (day, distance_km, fuel_liters, deliveries, on_time_rate, delayed)
                VALUES (?, ?, ?, 1, 100, 0)
                ON CONFLICT(day) DO UPDATE SET
                  deliveries = deliveries + 1,
-                 miles = miles + ?,
-                 fuel_gallons = fuel_gallons + ?`,
+                 distance_km = distance_km + ?,
+                 fuel_liters = fuel_liters + ?`,
               day,
               shipment.distance_total,
               Number((shipment.distance_total / 7).toFixed(1)),
@@ -140,7 +140,7 @@ export function startSimulator(io) {
               shipment.id,
             );
             run(
-              'UPDATE vehicles SET lat = ?, lng = ?, speed_mph = ?, fuel_level = ?, updated_at = ? WHERE id = ?',
+              'UPDATE vehicles SET lat = ?, lng = ?, speed_kmh = ?, fuel_level = ?, updated_at = ? WHERE id = ?',
               point.lat,
               point.lng,
               Number(speed.toFixed(1)),
@@ -159,7 +159,7 @@ export function startSimulator(io) {
 
           if (Math.random() < 0.12) {
             run(
-              'INSERT INTO telemetry (vehicle_id, lat, lng, speed_mph, fuel_level, recorded_at) VALUES (?, ?, ?, ?, ?, ?)',
+              'INSERT INTO telemetry (vehicle_id, lat, lng, speed_kmh, fuel_level, recorded_at) VALUES (?, ?, ?, ?, ?, ?)',
               shipment.vehicle_id,
               point.lat,
               point.lng,

@@ -41,7 +41,7 @@ router.get('/', (req, res) => {
     safety: 'd.safety_score DESC, d.efficiency DESC',
     efficiency: 'd.efficiency DESC, d.safety_score DESC',
     deliveries: 'd.deliveries_completed DESC',
-    miles: 'd.total_miles DESC',
+    km: 'd.total_km DESC',
     name: 'd.name ASC',
     ontime: 'd.on_time_rate DESC',
   };

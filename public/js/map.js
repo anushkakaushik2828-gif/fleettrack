@@ -16,8 +16,8 @@ export class FleetMap {
       worldCopyJump: false,
     }).setView([39.1, -96.8], 4);
 
-    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+    window.L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://wikimediafoundation.org/" target="_blank" rel="noopener">Wikimedia</a>',
       maxZoom: 19,
     }).addTo(this.map);
 
@@ -54,7 +54,7 @@ export class FleetMap {
         </div>
         <div class="mt-1 text-[10px] text-slate-500">${escape(vehicle.driverName || 'Unassigned driver')}</div>
         <div class="mt-1.5 flex items-center gap-2 text-[10px] text-slate-600">
-          <span>${speed} mph</span><span class="text-slate-300">·</span><span>${Number(vehicle.fuelLevel || 0).toFixed(0)}% fuel</span>
+          <span>${speed} km/h</span><span class="text-slate-300">·</span><span>${Number(vehicle.fuelLevel || 0).toFixed(0)}% fuel</span>
         </div>
         ${vehicle.currentOrder ? `<div class="mt-1.5 pt-1.5 border-t border-slate-100 text-[9px] font-semibold text-blue-600">#${escape(vehicle.currentOrder)} → ${escape(vehicle.currentDestination || '')}</div>` : ''}
       </div>

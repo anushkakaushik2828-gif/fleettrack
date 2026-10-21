@@ -100,13 +100,13 @@ function renderRecent(shipments) {
 function renderCharts(data) {
   const week = data.weeklyMetrics || [];
   const labels = week.map((item) => item.day);
-  const fuel = week.map((item) => item.fuelGallons);
+  const fuel = week.map((item) => item.fuelLiters);
   lineChart(document.getElementById('fuelChart'), {
     labels,
     series: [{ name: 'Fuel used', values: fuel, color: '#3b82f6' }],
     height: 180,
     yFormat: (value) => `${Math.round(value / 100) / 10}k`,
-    valueFormat: (value) => `${formatNumber(value)} gal`,
+    valueFormat: (value) => `${formatNumber(value)} L`,
     xLabelFormatter: (label) => dayLabel(label).split(',')[0],
     showLegend: false,
     ariaLabel: 'Weekly fleet fuel consumption',
@@ -123,7 +123,7 @@ function renderCharts(data) {
     }],
     height: 180,
     yFormat: (value) => Number(value).toFixed(0),
-    valueFormat: (value) => `${Number(value).toFixed(1)} mpg`,
+    valueFormat: (value) => `${Number(value).toFixed(1)} kmpl`,
     showLegend: false,
     ariaLabel: 'Top five drivers by fuel efficiency',
     maxBarWidth: 30,
@@ -243,7 +243,7 @@ function showInspector(vehicle) {
   inspector.classList.remove('hidden');
   setText('inspectorVehicle', vehicle.code);
   setText('inspectorDriver', `${vehicle.driverName || 'Unassigned'} · ${vehicle.model || 'Fleet vehicle'}`);
-  setText('inspectorSpeed', `${Number(vehicle.speed || 0).toFixed(0)} mph`);
+  setText('inspectorSpeed', `${Number(vehicle.speed || 0).toFixed(0)} km/h`);
   setText('inspectorFuel', `${Number(vehicle.fuelLevel || 0).toFixed(0)}%`);
   const status = vehicle.status === 'active' ? 'Active' : vehicle.status === 'idle' ? 'Idle' : 'Service';
   setText('inspectorStatus', status);

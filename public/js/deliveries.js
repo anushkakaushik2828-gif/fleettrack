@@ -207,7 +207,7 @@ function renderTable() {
         </td>
         <td class="w-32">
           <div class="flex items-center justify-between text-[10px] mb-1 font-mono text-slate-500">
-            <span>${formatNumber(shipment.distanceDone)} / ${formatNumber(shipment.distanceTotal)} mi</span>
+            <span>${formatNumber(shipment.distanceDone)} / ${formatNumber(shipment.distanceTotal)} km</span>
             <span class="row-progress-text text-slate-800 font-bold">${Math.round(shipment.progress)}%</span>
           </div>
           <div class="progress-track h-1.5">
@@ -287,7 +287,7 @@ function renderDetail(shipment) {
   const vehicle = shipment.vehicle;
   const progress = Math.min(100, Math.round(Number(shipment.progress) || 0));
   const status = statusBadge(shipment.status);
-  const temp = shipment.tempF === null || shipment.tempF === undefined ? 'Ambient' : `${Number(shipment.tempF).toFixed(1)}°F`;
+  const temp = shipment.tempC === null || shipment.tempC === undefined ? 'Ambient' : `${Number(shipment.tempC).toFixed(1)}°C`;
   const tempColor = temp === 'Ambient' ? 'text-slate-800' : 'text-emerald-700';
   const battery = vehicle?.battery != null ? `${Number(vehicle.battery).toFixed(1)}%` : '—';
   const etaLabel = shipment.status === 'delivered'
@@ -340,7 +340,7 @@ function renderDetail(shipment) {
         </div>
         <div class="progress-track h-2"><div id="detailProgressBar" class="progress-fill ${progressColor(shipment.status)}" style="width:${progress}%"></div></div>
         <div class="flex items-center justify-between mt-2 text-[10px] text-slate-400">
-          <span>${formatNumber(shipment.distanceDone)} / ${formatNumber(shipment.distanceTotal)} mi</span>
+          <span>${formatNumber(shipment.distanceDone)} / ${formatNumber(shipment.distanceTotal)} km</span>
           <span>${escapeHtml(etaLabel)}</span>
         </div>
       </div>
@@ -845,8 +845,8 @@ function openDocument(shipment) {
         <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Route</p><p class="font-medium text-slate-800 mt-1">${escapeHtml(shipment.route)}</p></div>
         <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Cargo</p><p class="font-medium text-slate-800 mt-1">${escapeHtml(shipment.cargo)}</p></div>
         <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Weight</p><p class="font-medium text-slate-800 mt-1">${Number(shipment.weightTons).toFixed(1)} tons</p></div>
-        <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Temperature</p><p class="font-medium text-slate-800 mt-1">${shipment.tempF != null ? `${Number(shipment.tempF).toFixed(1)}°F` : 'Ambient / dry freight'}</p></div>
-        <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Distance</p><p class="font-medium text-slate-800 mt-1">${formatNumber(shipment.distanceTotal)} miles</p></div>
+        <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Temperature</p><p class="font-medium text-slate-800 mt-1">${shipment.tempC != null ? `${Number(shipment.tempC).toFixed(1)}°C` : 'Ambient / dry freight'}</p></div>
+        <div><p class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Distance</p><p class="font-medium text-slate-800 mt-1">${formatNumber(shipment.distanceTotal)} km</p></div>
       </div>
       <div class="mx-5 mb-5 border-t border-dashed border-slate-200 pt-4 grid grid-cols-2 gap-6">
         <div>
@@ -885,12 +885,12 @@ async function openTelemetry(shipment) {
       return;
     }
     const metrics = [
-      { label: 'Speed', value: `${Number(vehicle.speed).toFixed(0)} mph`, icon: 'gauge' },
+      { label: 'Speed', value: `${Number(vehicle.speed).toFixed(0)} km/h`, icon: 'gauge' },
       { label: 'Fuel level', value: `${Number(vehicle.fuelLevel).toFixed(1)}%`, icon: 'fuel' },
       { label: 'Battery', value: `${Number(vehicle.battery).toFixed(1)}%`, icon: 'battery-charging' },
-      { label: 'Engine temp', value: `${Number(vehicle.engineTemp).toFixed(0)}°F`, icon: 'thermometer' },
+      { label: 'Engine temp', value: `${Number(vehicle.engineTemp).toFixed(0)}°C`, icon: 'thermometer' },
       { label: 'Region', value: vehicle.region, icon: 'map-pinned' },
-      { label: 'Odometer', value: `${formatNumber(vehicle.odometer)} mi`, icon: 'route' },
+      { label: 'Odometer', value: `${formatNumber(vehicle.odometer)} km`, icon: 'route' },
     ];
     content.innerHTML = `
       <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200">

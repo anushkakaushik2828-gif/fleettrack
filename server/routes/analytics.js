@@ -26,12 +26,12 @@ router.get('/', (req, res) => {
     range,
   ).reverse().map((row) => ({
     day: row.day,
-    miles: row.miles,
-    fuelGallons: Number(row.fuel_gallons),
+    distanceKm: row.distance_km,
+    fuelLiters: Number(row.fuel_liters),
     deliveries: row.deliveries,
     onTimeRate: Number(row.on_time_rate),
     delayed: row.delayed,
-    mpg: Number((row.miles / Math.max(1, row.fuel_gallons)).toFixed(2)),
+    kmpl: Number((row.distance_km / Math.max(1, row.fuel_liters)).toFixed(2)),
   }));
 
   const sum = (rows, field) => rows.reduce((total, row) => total + Number(row[field] || 0), 0);
@@ -39,13 +39,13 @@ router.get('/', (req, res) => {
     ? rows.reduce((total, row) => total + Number(row[field] || 0), 0) / rows.length
     : 0;
 
-  const totalMiles = sum(series, 'miles');
-  const totalFuel = sum(series, 'fuelGallons');
+  const totalDistanceKm = sum(series, 'distanceKm');
+  const totalFuelLiters = sum(series, 'fuelLiters');
   const totalDeliveries = sum(series, 'deliveries');
   const avgOnTime = avg(series, 'onTimeRate');
-  const avgMpg = totalFuel ? Number((totalMiles / totalFuel).toFixed(2)) : 0;
-  const prevMiles = sum(previous, 'miles');
-  const prevFuel = sum(previous, 'fuelGallons');
+  const avgKmpl = totalFuelLiters ? Number((totalDistanceKm / totalFuelLiters).toFixed(2)) : 0;
+  const prevDistanceKm = sum(previous, 'distanceKm');
+  const prevFuelLiters = sum(previous, 'fuelLiters');
   const prevDeliveries = sum(previous, 'deliveries');
   const prevOnTime = avg(previous, 'onTimeRate');
   const summary = getFleetSummary();
@@ -58,15 +58,15 @@ router.get('/', (req, res) => {
     range,
     series,
     summary: {
-      totalMiles,
-      totalFuel,
+      totalDistanceKm,
+      totalFuelLiters,
       totalDeliveries,
       avgOnTime: Number(avgOnTime.toFixed(1)),
-      avgMpg,
-      fuelCost: Math.round(totalFuel * 3.94),
+      avgKmpl,
+      fuelCost: Math.round(totalFuelLiters * 88),
       delayed: sum(series, 'delayed'),
-      milesChange: pctChange(totalMiles, prevMiles),
-      fuelChange: pctChange(totalFuel, prevFuel),
+      distanceChange: pctChange(totalDistanceKm, prevDistanceKm),
+      fuelChange: pctChange(totalFuelLiters, prevFuelLiters),
       deliveriesChange: pctChange(totalDeliveries, prevDeliveries),
       onTimeChange: Number((avgOnTime - prevOnTime).toFixed(1)),
     },

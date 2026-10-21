@@ -30,8 +30,8 @@ db.exec(`
     license_no TEXT,
     status TEXT NOT NULL DEFAULT 'on_duty',
     safety_score REAL NOT NULL DEFAULT 90,
-    efficiency REAL NOT NULL DEFAULT 8,
-    total_miles INTEGER NOT NULL DEFAULT 0,
+    efficiency REAL NOT NULL DEFAULT 12,
+    total_km INTEGER NOT NULL DEFAULT 0,
     deliveries_completed INTEGER NOT NULL DEFAULT 0,
     on_time_rate REAL NOT NULL DEFAULT 98,
     rating REAL NOT NULL DEFAULT 4.8,
@@ -52,12 +52,12 @@ db.exec(`
     fuel_level REAL NOT NULL DEFAULT 80,
     odometer INTEGER NOT NULL DEFAULT 0,
     battery REAL NOT NULL DEFAULT 98,
-    engine_temp REAL NOT NULL DEFAULT 195,
+    engine_temp REAL NOT NULL DEFAULT 90,
     last_service_at TEXT,
-    next_service_miles INTEGER NOT NULL DEFAULT 0,
+    next_service_km INTEGER NOT NULL DEFAULT 0,
     lat REAL,
     lng REAL,
-    speed_mph REAL NOT NULL DEFAULT 0,
+    speed_kmh REAL NOT NULL DEFAULT 0,
     region TEXT NOT NULL DEFAULT 'North',
     updated_at TEXT NOT NULL
   );
@@ -79,7 +79,7 @@ db.exec(`
     distance_done REAL NOT NULL DEFAULT 0,
     cargo TEXT NOT NULL,
     weight_tons REAL NOT NULL DEFAULT 0,
-    temp_f REAL,
+    temp_c REAL,
     status TEXT NOT NULL DEFAULT 'in_transit',
     progress REAL NOT NULL DEFAULT 0,
     departed_at TEXT NOT NULL,
@@ -119,15 +119,15 @@ db.exec(`
     vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
     lat REAL NOT NULL,
     lng REAL NOT NULL,
-    speed_mph REAL NOT NULL DEFAULT 0,
+    speed_kmh REAL NOT NULL DEFAULT 0,
     fuel_level REAL NOT NULL DEFAULT 0,
     recorded_at TEXT NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS daily_metrics (
     day TEXT PRIMARY KEY,
-    miles REAL NOT NULL DEFAULT 0,
-    fuel_gallons REAL NOT NULL DEFAULT 0,
+    distance_km REAL NOT NULL DEFAULT 0,
+    fuel_liters REAL NOT NULL DEFAULT 0,
     deliveries INTEGER NOT NULL DEFAULT 0,
     on_time_rate REAL NOT NULL DEFAULT 0,
     delayed INTEGER NOT NULL DEFAULT 0

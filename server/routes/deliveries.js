@@ -272,14 +272,14 @@ router.post('/', (req, res) => {
 
   const distance = roadDistance(originCity, destinationCity);
   const now = new Date();
-  const eta = new Date(now.getTime() + ((distance / 52) + 0.35) * 3600 * 1000);
+  const eta = new Date(now.getTime() + ((distance / 85) + 0.35) * 3600 * 1000);
   const reefer = cargo === 'Refrigerated' || cargo === 'Medical Supplies';
   const result = transaction(() => {
     const insert = run(
       `INSERT INTO shipments
         (order_code, vehicle_id, driver_id, origin, origin_lat, origin_lng, destination,
          destination_lat, destination_lng, route, region, distance_total, distance_done, cargo,
-         weight_tons, temp_f, status, progress, departed_at, eta_at, delivered_at, delay_reason,
+         weight_tons, temp_c, status, progress, departed_at, eta_at, delivered_at, delay_reason,
          pod_signature, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, 'in_transit', 2, ?, ?, NULL, NULL, NULL, ?, ?)`,
       orderCode,
@@ -296,7 +296,7 @@ router.post('/', (req, res) => {
       distance,
       cargo,
       Number(weightTons.toFixed(1)),
-      reefer ? Number((36 + Math.random() * 3).toFixed(1)) : null,
+      reefer ? Number((22 + Math.random() * 5).toFixed(1)) : null,
       now.toISOString(),
       eta.toISOString(),
       now.toISOString(),
@@ -312,7 +312,7 @@ router.post('/', (req, res) => {
       'departure',
     );
     run(
-      'UPDATE vehicles SET status = ?, lat = ?, lng = ?, speed_mph = 0, updated_at = ? WHERE id = ?',
+      'UPDATE vehicles SET status = ?, lat = ?, lng = ?, speed_kmh = 0, updated_at = ? WHERE id = ?',
       'active',
       originCity.lat,
       originCity.lng,
@@ -379,12 +379,12 @@ router.patch('/:id/status', (req, res) => {
       );
       const day = now.slice(0, 10);
       run(
-        `INSERT INTO daily_metrics (day, miles, fuel_gallons, deliveries, on_time_rate, delayed)
+        `INSERT INTO daily_metrics (day, distance_km, fuel_liters, deliveries, on_time_rate, delayed)
          VALUES (?, ?, ?, 1, 100, 0)
          ON CONFLICT(day) DO UPDATE SET
            deliveries = deliveries + 1,
-           miles = miles + ?,
-           fuel_gallons = fuel_gallons + ?`,
+           distance_km = distance_km + ?,
+           fuel_liters = fuel_liters + ?`,
         day,
         row.distance_total,
         Number((row.distance_total / 7).toFixed(1)),
@@ -437,3 +437,4 @@ router.post('/:id/copy', (req, res) => {
 });
 
 export default router;
+

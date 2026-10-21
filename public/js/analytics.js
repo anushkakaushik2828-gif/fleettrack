@@ -29,11 +29,11 @@ const RANGE_LABELS = { 7: 'Last 7 days', 30: 'Last 30 days', 90: 'Last 90 days' 
 const MODE_CONFIG = {
   distance: {
     name: 'Distance',
-    field: 'miles',
+    field: 'distanceKm',
     color: '#2563eb',
     subtitle: (range) => `Distance traveled across the fleet over the last ${range} days.`,
     yFormat: (value) => formatCompact(value),
-    valueFormat: (value) => `${formatNumber(value)} mi`,
+    valueFormat: (value) => `${formatNumber(value)} km`,
   },
   deliveries: {
     name: 'Deliveries',
@@ -45,11 +45,11 @@ const MODE_CONFIG = {
   },
   fuel: {
     name: 'Fuel used',
-    field: 'fuelGallons',
+    field: 'fuelLiters',
     color: '#f59e0b',
     subtitle: (range) => `Diesel and electric-equivalent consumption over the last ${range} days.`,
-    yFormat: (value) => `${formatCompact(value)} gal`,
-    valueFormat: (value) => `${formatNumber(value)} gal`,
+    yFormat: (value) => `${formatCompact(value)} L`,
+    valueFormat: (value) => `${formatNumber(value)} L`,
   },
   ontime: {
     name: 'On-time rate',
@@ -89,27 +89,27 @@ function labelForRange(day) {
 
 function renderKpis() {
   const { summary, series } = state.data;
-  setUnit('analyticsMiles', formatCompact(summary.totalMiles), 'mi');
-  document.getElementById('analyticsMiles')?.setAttribute('title', `${formatNumber(summary.totalMiles)} miles`);
+  setUnit('analyticsDistance', formatCompact(summary.totalDistanceKm), 'km');
+  document.getElementById('analyticsDistance')?.setAttribute('title', `${formatNumber(summary.totalDistanceKm)} km`);
   setText('analyticsDeliveries', formatNumber(summary.totalDeliveries));
-  setUnit('analyticsMpg', formatDecimal(summary.avgMpg, 2), 'mpg');
+  setUnit('analyticsKmpl', formatDecimal(summary.avgKmpl, 2), 'kmpl');
   setText('analyticsOnTime', `${formatDecimal(summary.avgOnTime, 1)}%`);
 
-  setChange('analyticsMilesChange', summary.milesChange);
+  setChange('analyticsDistanceChange', summary.distanceChange);
   setChange('analyticsDeliveriesChange', summary.deliveriesChange);
   setChange('analyticsFuelChange', summary.fuelChange, { invert: true });
   setChange('analyticsOnTimeChange', summary.onTimeChange, { suffix: ' pts' });
 
-  sparkline(document.getElementById('milesSpark'), {
-    values: series.map((item) => item.miles),
+  sparkline(document.getElementById('distanceSpark'), {
+    values: series.map((item) => item.distanceKm),
     color: '#2563eb',
   });
   sparkline(document.getElementById('deliveriesSpark'), {
     values: series.map((item) => item.deliveries),
     color: '#10b981',
   });
-  sparkline(document.getElementById('mpgSpark'), {
-    values: series.map((item) => item.mpg),
+  sparkline(document.getElementById('kmplSpark'), {
+    values: series.map((item) => item.kmpl),
     color: '#7c3aed',
   });
   sparkline(document.getElementById('onTimeSpark'), {
@@ -202,20 +202,20 @@ function renderOps() {
 
 function renderEfficiency() {
   const { series } = state.data;
-  lineChart(document.getElementById('mpgChart'), {
+  lineChart(document.getElementById('kmplChart'), {
     labels: series.map((item) => item.day),
-    series: [{ name: 'MPG', values: series.map((item) => item.mpg), color: '#10b981' }],
+    series: [{ name: 'KM/L', values: series.map((item) => item.kmpl), color: '#10b981' }],
     height: 190,
     yFormat: (value) => formatDecimal(value, 1),
-    valueFormat: (value) => `${formatDecimal(value, 2)} mpg`,
+    valueFormat: (value) => `${formatDecimal(value, 2)} kmpl`,
     xLabelFormatter: labelForRange,
     showLegend: false,
     ariaLabel: 'Average fleet fuel efficiency',
   });
-  const best = series.reduce((winner, item) => (!winner || item.mpg > winner.mpg ? item : winner), null);
-  const bestDay = document.getElementById('mpgBestDay');
+  const best = series.reduce((winner, item) => (!winner || item.kmpl > winner.kmpl ? item : winner), null);
+  const bestDay = document.getElementById('kmplBestDay');
   if (bestDay && best) {
-    bestDay.textContent = `${monthDay(best.day)} · ${formatDecimal(best.mpg, 2)} mpg`;
+    bestDay.textContent = `${monthDay(best.day)} · ${formatDecimal(best.kmpl, 2)} kmpl`;
   }
 
   lineChart(document.getElementById('ontimeChart'), {
@@ -299,7 +299,7 @@ function renderTopDrivers() {
           <span class="text-[10px] font-bold text-slate-900 shrink-0">${formatDecimal(driver.safetyScore, 1)}</span>
         </div>
         <div class="flex items-center justify-between gap-2 mt-1">
-          <p class="text-[9px] text-slate-400 truncate">${escapeHtml(driver.vehicleCode || 'Unassigned')} · ${formatDecimal(driver.efficiency, 1)} mpg</p>
+          <p class="text-[9px] text-slate-400 truncate">${escapeHtml(driver.vehicleCode || 'Unassigned')} · ${formatDecimal(driver.efficiency, 1)} kmpl</p>
           <div class="progress-track h-1 w-16 shrink-0"><div class="progress-fill bg-blue-500" style="width:${Math.min(100, driver.safetyScore)}%"></div></div>
         </div>
       </div>
@@ -399,12 +399,12 @@ function setupControls() {
       return;
     }
     const rows = [
-      ['Date', 'Miles', 'Fuel gallons', 'MPG', 'Deliveries', 'On-time rate', 'Delayed'],
+      ['Date', 'Distance km', 'Fuel liters', 'KM/L', 'Deliveries', 'On-time rate', 'Delayed'],
       ...state.data.series.map((item) => [
         item.day,
-        item.miles,
-        item.fuelGallons,
-        item.mpg,
+        item.distanceKm,
+        item.fuelLiters,
+        item.kmpl,
         item.deliveries,
         item.onTimeRate,
         item.delayed,

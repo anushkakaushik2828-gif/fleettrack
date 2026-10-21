@@ -42,7 +42,7 @@ export function toCamelShipment(row) {
     distanceDone: row.distance_done,
     cargo: row.cargo,
     weightTons: row.weight_tons,
-    tempF: row.temp_f,
+    tempC: row.temp_c,
     status: row.status,
     progress: Number(row.progress.toFixed(1)),
     departedAt: row.departed_at,
@@ -67,7 +67,7 @@ export function toCamelDriver(row, vehicle = null) {
     status: row.status,
     safetyScore: Number(row.safety_score),
     efficiency: Number(row.efficiency),
-    totalMiles: row.total_miles,
+    totalKm: row.total_km,
     deliveriesCompleted: row.deliveries_completed,
     onTimeRate: Number(row.on_time_rate),
     rating: Number(row.rating),
@@ -156,7 +156,7 @@ export function getLiveVehicles() {
     driverColor: row.avatar_color,
     lat: row.lat,
     lng: row.lng,
-    speed: Number(row.speed_mph),
+    speed: Number(row.speed_kmh),
     fuelLevel: Number(row.fuel_level),
     battery: Number(row.battery),
     engineTemp: Number(row.engine_temp),
@@ -202,12 +202,12 @@ export function getWeeklyMetrics(days = 7) {
   ).reverse();
   return rows.map((row) => ({
     day: row.day,
-    miles: Math.round(row.miles),
-    fuelGallons: Math.round(row.fuel_gallons),
+    distanceKm: Math.round(row.distance_km),
+    fuelLiters: Math.round(row.fuel_liters),
     deliveries: row.deliveries,
     onTimeRate: Number(row.on_time_rate),
     delayed: row.delayed,
-    mpg: Number((row.miles / Math.max(1, row.fuel_gallons)).toFixed(2)),
+    kmpl: Number((row.distance_km / Math.max(1, row.fuel_liters)).toFixed(2)),
   }));
 }
 

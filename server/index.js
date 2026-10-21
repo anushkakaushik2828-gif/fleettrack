@@ -39,6 +39,7 @@ app.use(helmet({
         "'self'",
         'data:',
         'blob:',
+        'https://maps.wikimedia.org',
         'https://tile.openstreetmap.org',
         'https://*.tile.openstreetmap.org',
       ],
@@ -184,6 +185,7 @@ io.use((socket, next) => {
 });
 
 io.on('connection', (socket) => {
+  if (!socket.user) return socket.disconnect(true);
   socket.emit('connected', {
     user: { id: socket.user.id, name: socket.user.name },
     timestamp: new Date().toISOString(),

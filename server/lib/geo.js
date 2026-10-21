@@ -1,56 +1,47 @@
 export const CITIES = [
-  { name: 'Chicago, IL', short: 'Chicago', region: 'North', lat: 41.8781, lng: -87.6298 },
-  { name: 'Detroit, MI', short: 'Detroit', region: 'North', lat: 42.3314, lng: -83.0458 },
-  { name: 'Cleveland, OH', short: 'Cleveland', region: 'North', lat: 41.4993, lng: -81.6944 },
-  { name: 'Columbus, OH', short: 'Columbus', region: 'North', lat: 39.9612, lng: -82.9988 },
-  { name: 'Indianapolis, IN', short: 'Indianapolis', region: 'North', lat: 39.7684, lng: -86.1581 },
-  { name: 'Milwaukee, WI', short: 'Milwaukee', region: 'North', lat: 43.0389, lng: -87.9065 },
-  { name: 'Minneapolis, MN', short: 'Minneapolis', region: 'North', lat: 44.9778, lng: -93.265 },
-  { name: 'St. Louis, MO', short: 'St. Louis', region: 'North', lat: 38.627, lng: -90.1994 },
-  { name: 'Boston, MA', short: 'Boston', region: 'East', lat: 42.3601, lng: -71.0589 },
-  { name: 'New York, NY', short: 'New York', region: 'East', lat: 40.7128, lng: -74.006 },
-  { name: 'Philadelphia, PA', short: 'Philadelphia', region: 'East', lat: 39.9526, lng: -75.1652 },
-  { name: 'Baltimore, MD', short: 'Baltimore', region: 'East', lat: 39.2904, lng: -76.6122 },
-  { name: 'Washington, DC', short: 'Washington', region: 'East', lat: 38.9072, lng: -77.0369 },
-  { name: 'Richmond, VA', short: 'Richmond', region: 'East', lat: 37.5407, lng: -77.436 },
-  { name: 'Pittsburgh, PA', short: 'Pittsburgh', region: 'East', lat: 40.4406, lng: -79.9959 },
-  { name: 'Buffalo, NY', short: 'Buffalo', region: 'East', lat: 42.8864, lng: -78.8784 },
-  { name: 'Atlanta, GA', short: 'Atlanta', region: 'South', lat: 33.749, lng: -84.388 },
-  { name: 'Miami, FL', short: 'Miami', region: 'South', lat: 25.7617, lng: -80.1918 },
-  { name: 'Orlando, FL', short: 'Orlando', region: 'South', lat: 28.5383, lng: -81.3792 },
-  { name: 'Charlotte, NC', short: 'Charlotte', region: 'South', lat: 35.2271, lng: -80.8431 },
-  { name: 'Nashville, TN', short: 'Nashville', region: 'South', lat: 36.1627, lng: -86.7816 },
-  { name: 'Memphis, TN', short: 'Memphis', region: 'South', lat: 35.1495, lng: -90.049 },
-  { name: 'New Orleans, LA', short: 'New Orleans', region: 'South', lat: 29.9511, lng: -90.0715 },
-  { name: 'Jacksonville, FL', short: 'Jacksonville', region: 'South', lat: 30.3322, lng: -81.6557 },
-  { name: 'Dallas, TX', short: 'Dallas', region: 'South', lat: 32.7767, lng: -96.797 },
-  { name: 'Austin, TX', short: 'Austin', region: 'South', lat: 30.2672, lng: -97.7431 },
-  { name: 'Houston, TX', short: 'Houston', region: 'South', lat: 29.7604, lng: -95.3698 },
-  { name: 'San Antonio, TX', short: 'San Antonio', region: 'South', lat: 29.4241, lng: -98.4936 },
-  { name: 'Seattle, WA', short: 'Seattle', region: 'West', lat: 47.6062, lng: -122.3321 },
-  { name: 'Portland, OR', short: 'Portland', region: 'West', lat: 45.5152, lng: -122.6784 },
-  { name: 'San Francisco, CA', short: 'San Francisco', region: 'West', lat: 37.7749, lng: -122.4194 },
-  { name: 'Los Angeles, CA', short: 'Los Angeles', region: 'West', lat: 34.0522, lng: -118.2437 },
-  { name: 'San Diego, CA', short: 'San Diego', region: 'West', lat: 32.7157, lng: -117.1611 },
-  { name: 'Phoenix, AZ', short: 'Phoenix', region: 'West', lat: 33.4484, lng: -112.074 },
-  { name: 'Denver, CO', short: 'Denver', region: 'West', lat: 39.7392, lng: -104.9903 },
-  { name: 'Salt Lake City, UT', short: 'Salt Lake City', region: 'West', lat: 40.7608, lng: -111.891 },
-  { name: 'Las Vegas, NV', short: 'Las Vegas', region: 'West', lat: 36.1699, lng: -115.1398 },
-  { name: 'Boise, ID', short: 'Boise', region: 'West', lat: 43.615, lng: -116.2023 },
-  { name: 'Sacramento, CA', short: 'Sacramento', region: 'West', lat: 38.5816, lng: -121.4944 },
-  { name: 'Albuquerque, NM', short: 'Albuquerque', region: 'West', lat: 35.0844, lng: -106.6504 },
+  { name: 'Delhi, DL', short: 'Delhi', region: 'North', lat: 28.6139, lng: 77.2090 },
+  { name: 'Mumbai, MH', short: 'Mumbai', region: 'West', lat: 19.0760, lng: 72.8777 },
+  { name: 'Bengaluru, KA', short: 'Bengaluru', region: 'South', lat: 12.9716, lng: 77.5946 },
+  { name: 'Chennai, TN', short: 'Chennai', region: 'South', lat: 13.0827, lng: 80.2707 },
+  { name: 'Kolkata, WB', short: 'Kolkata', region: 'East', lat: 22.5726, lng: 88.3639 },
+  { name: 'Hyderabad, TS', short: 'Hyderabad', region: 'South', lat: 17.3850, lng: 78.4867 },
+  { name: 'Pune, MH', short: 'Pune', region: 'West', lat: 18.5204, lng: 73.8567 },
+  { name: 'Ahmedabad, GJ', short: 'Ahmedabad', region: 'West', lat: 23.0225, lng: 72.5714 },
+  { name: 'Jaipur, RJ', short: 'Jaipur', region: 'North', lat: 26.9124, lng: 75.7873 },
+  { name: 'Lucknow, UP', short: 'Lucknow', region: 'North', lat: 26.8467, lng: 80.9462 },
+  { name: 'Kochi, KL', short: 'Kochi', region: 'South', lat: 9.9312, lng: 76.2673 },
+  { name: 'Bhubaneswar, OD', short: 'Bhubaneswar', region: 'East', lat: 20.2961, lng: 85.8245 },
+  { name: 'Guwahati, AS', short: 'Guwahati', region: 'East', lat: 26.1445, lng: 91.7362 },
+  { name: 'Chandigarh, CH', short: 'Chandigarh', region: 'North', lat: 30.7333, lng: 76.7794 },
+  { name: 'Indore, MP', short: 'Indore', region: 'Central', lat: 22.7196, lng: 75.8577 },
+  { name: 'Bhopal, MP', short: 'Bhopal', region: 'Central', lat: 23.2599, lng: 77.4126 },
+  { name: 'Nagpur, MH', short: 'Nagpur', region: 'Central', lat: 21.1458, lng: 79.0882 },
+  { name: 'Coimbatore, TN', short: 'Coimbatore', region: 'South', lat: 11.0168, lng: 76.9556 },
+  { name: 'Visakhapatnam, AP', short: 'Visakhapatnam', region: 'South', lat: 17.6868, lng: 83.2185 },
+  { name: 'Thiruvananthapuram, KL', short: 'Trivandrum', region: 'South', lat: 8.5241, lng: 76.9366 },
+  { name: 'Patna, BR', short: 'Patna', region: 'East', lat: 25.5941, lng: 85.1376 },
+  { name: 'Ranchi, JH', short: 'Ranchi', region: 'East', lat: 23.3441, lng: 85.3096 },
+  { name: 'Raipur, CG', short: 'Raipur', region: 'Central', lat: 21.2514, lng: 81.6296 },
+  { name: 'Jammu, JK', short: 'Jammu', region: 'North', lat: 32.7266, lng: 74.8570 },
+  { name: 'Shillong, ML', short: 'Shillong', region: 'East', lat: 25.5788, lng: 91.8933 },
+  { name: 'Mangalore, KA', short: 'Mangalore', region: 'South', lat: 12.9141, lng: 74.8560 },
+  { name: 'Vijayawada, AP', short: 'Vijayawada', region: 'South', lat: 16.5062, lng: 80.6480 },
+  { name: 'Nashik, MH', short: 'Nashik', region: 'West', lat: 19.9975, lng: 73.7898 },
+  { name: 'Udaipur, RJ', short: 'Udaipur', region: 'North', lat: 24.5854, lng: 73.7125 },
+  { name: 'Gwalior, MP', short: 'Gwalior', region: 'Central', lat: 26.2183, lng: 78.1828 },
 ];
 
-export const REGIONS = ['North', 'East', 'South', 'West'];
+export const REGIONS = ['North', 'South', 'East', 'West', 'Central'];
 export const CARGO_TYPES = ['General Freight', 'Refrigerated', 'Electronics', 'Automotive Parts', 'Medical Supplies', 'Consumer Goods', 'Industrial Equipment', 'Food & Beverage'];
+export const INDIAN_HIGHWAYS = ['NH-44', 'NH-48', 'NH-27', 'NH-16', 'NH-19', 'NH-66', 'NH-52', 'NH-7', 'NH-8', 'NH-9'];
 
 export function cityByName(name) {
   return CITIES.find((city) => city.name === name) || CITIES[0];
 }
 
-export function distanceMiles(a, b) {
+export function distanceKm(a, b) {
   const toRad = (value) => (value * Math.PI) / 180;
-  const R = 3958.8;
+  const R = 6371; // Earth radius in kilometers
   const dLat = toRad(b.lat - a.lat);
   const dLng = toRad(b.lng - a.lng);
   const lat1 = toRad(a.lat);
@@ -60,12 +51,11 @@ export function distanceMiles(a, b) {
 }
 
 export function roadDistance(a, b) {
-  return Math.max(36, Math.round(distanceMiles(a, b) * 1.18));
+  return Math.max(60, Math.round(distanceKm(a, b) * 1.18));
 }
 
 export function interpolate(a, b, progress) {
   const t = Math.max(0, Math.min(1, progress / 100));
-  // A small arc keeps the point from sitting unnaturally on a perfectly straight line.
   const arc = Math.sin(t * Math.PI) * 0.35;
   const midpointOffset = arc * (a.lng > b.lng ? -1 : 1);
   return {
@@ -85,12 +75,8 @@ export function randomCity(region = null, random = Math.random) {
 }
 
 export function routeName(origin, destination, random = Math.random) {
-  const corridors = [
-    `I-${[10, 20, 35, 40, 70, 75, 80, 90, 94, 95][Math.floor(random() * 10)]}`,
-    `US-${[41, 60, 61, 66, 101][Math.floor(random() * 5)]}`,
-    `State Route ${Math.floor(random() * 80) + 10}`,
-  ];
-  return `${corridors[Math.floor(random() * corridors.length)]} · ${origin.short} → ${destination.short}`;
+  const highway = INDIAN_HIGHWAYS[Math.floor(random() * INDIAN_HIGHWAYS.length)];
+  return `${highway} · ${origin.short} → ${destination.short}`;
 }
 
 export function metaForClient() {

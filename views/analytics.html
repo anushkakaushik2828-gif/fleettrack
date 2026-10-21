@@ -48,10 +48,10 @@
         </div>
         <div class="mt-3 flex items-end justify-between gap-2">
           <div>
-            <p id="analyticsMiles" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
-            <p class="text-[10px] text-slate-400 mt-1"><span id="analyticsMilesChange" class="font-semibold">—</span> vs previous period</p>
+            <p id="analyticsDistance" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
+            <p class="text-[10px] text-slate-400 mt-1"><span id="analyticsDistanceChange" class="font-semibold">—</span> vs previous period</p>
           </div>
-          <div id="milesSpark" class="w-[90px] h-9 shrink-0"></div>
+          <div id="distanceSpark" class="w-[90px] h-9 shrink-0"></div>
         </div>
       </div>
       <div class="card p-4 overflow-hidden">
@@ -74,10 +74,10 @@
         </div>
         <div class="mt-3 flex items-end justify-between gap-2">
           <div>
-            <p id="analyticsMpg" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
+            <p id="analyticsKmpl" class="text-[28px] leading-8 font-extrabold tracking-tight text-slate-950">—</p>
             <p class="text-[10px] text-slate-400 mt-1"><span id="analyticsFuelChange" class="font-semibold">—</span> fuel usage vs prior</p>
           </div>
-          <div id="mpgSpark" class="w-[90px] h-9 shrink-0"></div>
+          <div id="kmplSpark" class="w-[90px] h-9 shrink-0"></div>
         </div>
       </div>
       <div class="card p-4 overflow-hidden">
@@ -173,13 +173,13 @@
         <div class="flex items-start justify-between gap-3">
           <div>
             <h2 class="text-base font-bold text-slate-950 tracking-tight">Fuel Efficiency</h2>
-            <p class="text-[11px] text-slate-500 mt-0.5">Miles per gallon across all active assets.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kilometers per liter across all active assets.</p>
           </div>
-          <span class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">MPG</span>
+          <span class="text-[9px] uppercase tracking-wider font-semibold text-slate-400">KM/L</span>
         </div>
-        <div id="mpgChart" class="mt-3 min-h-[190px]"></div>
+        <div id="kmplChart" class="mt-3 min-h-[190px]"></div>
         <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
-          <p class="text-[10px] text-slate-500"><span class="font-bold text-slate-900" id="mpgBestDay">—</span> best efficiency day</p>
+          <p class="text-[10px] text-slate-500"><span class="font-bold text-slate-900" id="kmplBestDay">—</span> best efficiency day</p>
           <span class="text-[10px] text-emerald-600 font-semibold inline-flex items-center gap-1"><i data-lucide="leaf" class="w-3 h-3"></i>Fuel program active</span>
         </div>
       </div>
