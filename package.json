@@ -36,12 +36,12 @@
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
     "lucide": "^1.60.0",
-    "socket.io": "^4.8.4"
+    "socket.io": "^4.8.4",
+    "tailwindcss": "^3.4.17",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.5.31"
   },
   "devDependencies": {
-    "autoprefixer": "^10.6.1",
-    "postcss": "^8.5.31",
-    "selfsigned": "^5.5.0",
-    "tailwindcss": "^3.4.17"
+    "selfsigned": "^5.5.0"
   }
 }
