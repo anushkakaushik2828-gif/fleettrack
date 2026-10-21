@@ -361,7 +361,7 @@ router.patch('/:id/status', (req, res) => {
          updated_at = ? WHERE id = ?`,
         now,
         now,
-        'Sarah Chen',
+        'Aarav Sharma',
         now,
         id,
       );
