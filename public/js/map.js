@@ -14,11 +14,12 @@ export class FleetMap {
       minZoom: 3,
       maxZoom: 9,
       worldCopyJump: false,
-    }).setView([39.1, -96.8], 4);
+    }).setView([22.0, 78.0], 5);
 
     window.L.tileLayer('https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://wikimediafoundation.org/" target="_blank" rel="noopener">Wikimedia</a>',
       maxZoom: 19,
+      crossOrigin: true,
     }).addTo(this.map);
 
     window.L.control.zoom({ position: 'bottomright' }).addTo(this.map);
